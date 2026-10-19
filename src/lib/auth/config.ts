@@ -5,7 +5,9 @@ export const PROTECTED_PREFIXES = ["/calendar", "/journal"];
 export const authConfig = {
   pages: {
     signIn: "/login",
+    error: "/login",
   },
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
     maxAge: 60 * 60 * 24 * 30,

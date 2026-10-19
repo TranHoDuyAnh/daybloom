@@ -8,6 +8,8 @@ import { signIn } from "next-auth/react";
 import { Loader2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
+import { useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,27 +17,52 @@ import { Label } from "@/components/ui/label";
 import { messages } from "@/i18n";
 import { loginSchema, type LoginValues } from "@/lib/validation/auth";
 
-export function LoginForm() {
+interface LoginFormProps {
+  initialError?: string;
+}
+
+export function LoginForm({ initialError }: LoginFormProps = {}) {
   const router = useRouter();
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  async function onSubmit(values: LoginValues) {
-    const result = await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-      redirect: false,
-    });
-
-    if (!result || result.error) {
-      toast.error(messages.auth.invalidCredentials);
-      return;
+  useEffect(() => {
+    if (initialError) {
+      if (initialError === "Configuration") {
+        toast.error(messages.auth.configError);
+      } else if (initialError === "CredentialsSignin") {
+        toast.error(messages.auth.invalidCredentials);
+      } else {
+        toast.error(messages.auth.failed);
+      }
     }
+  }, [initialError]);
 
-    router.replace("/calendar");
-    router.refresh();
+  async function onSubmit(values: LoginValues) {
+    try {
+      const result = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+
+      if (!result || result.error) {
+        if (result?.error === "Configuration") {
+          toast.error(messages.auth.configError);
+        } else {
+          toast.error(messages.auth.invalidCredentials);
+        }
+        return;
+      }
+
+      router.replace("/calendar");
+      router.refresh();
+    } catch (error) {
+      console.error("[auth] signIn failed:", error);
+      toast.error(messages.auth.failed);
+    }
   }
 
   const { isSubmitting, errors } = form.formState;

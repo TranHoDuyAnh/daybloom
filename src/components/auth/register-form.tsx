@@ -37,19 +37,24 @@ export function RegisterForm() {
     }
     toast.success(messages.auth.registerSuccess);
 
-    const session = await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-      redirect: false,
-    });
+    try {
+      const session = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
 
-    if (!session || session.error) {
+      if (!session || session.error) {
+        router.replace("/login");
+        return;
+      }
+
+      router.replace("/calendar");
+      router.refresh();
+    } catch (error) {
+      console.error("[auth] auto-login failed after registration:", error);
       router.replace("/login");
-      return;
     }
-
-    router.replace("/calendar");
-    router.refresh();
   }
 
   const { isSubmitting, errors } = form.formState;

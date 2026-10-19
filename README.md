@@ -103,10 +103,10 @@ Mở [http://localhost:3000](http://localhost:3000), đăng nhập bằng `SEED_
 1. Push repository lên GitHub.
 2. Trên Vercel: **Add New → Project**, import repo.
 3. Thêm Neon: **Storage → Create Database → Neon** (hoặc dùng `DATABASE_URL` từ project Neon có sẵn).
-4. Khai báo Environment Variables cho cả Production/Preview:
+4. Khai báo Environment Variables cho cả Production/Preview trên Vercel:
    - `DATABASE_URL` (Neon connection string)
-   - `AUTH_SECRET` (`openssl rand -base64 32`)
-   - `AUTH_URL` = domain production (ví dụ `https://daybloom.vercel.app`) — **tuyệt đối không để `http://localhost:3000`**, nếu không đăng nhập sẽ không tạo được session
+   - `AUTH_SECRET` (tạo bằng lệnh `openssl rand -base64 32`) — **bắt buộc phải có**, nếu thiếu sẽ gây lỗi `500 (Internal Server Error)` tại `/api/auth/error`
+   - `AUTH_URL`: Trong Auth.js v5 trên Vercel, **không bắt buộc phải khai báo** (Auth.js sẽ tự động nhận diện domain qua Vercel). Nếu khai báo, **phải chính xác tuyệt đối với domain thật của bạn** (ví dụ `https://daybloom-blush.vercel.app`), tuyệt đối không copy domain khác hoặc để `http://localhost:3000`.
    - `SEED_USER_EMAIL`, `SEED_USER_PASSWORD`, `SEED_USER_NAME`
 5. Deploy.
 6. Chạy migration trên database production:

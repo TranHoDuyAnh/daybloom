@@ -36,6 +36,7 @@ export const vi = {
     missingFields: "Vui lòng nhập email và mật khẩu",
     invalidCredentials: "Email hoặc mật khẩu không đúng",
     failed: "Không thể đăng nhập. Vui lòng thử lại.",
+    configError: "Lỗi cấu hình xác thực hoặc cơ sở dữ liệu. Vui lòng kiểm tra biến môi trường máy chủ.",
     emailRequired: "Email không được để trống",
     passwordRequired: "Mật khẩu không được để trống",
     credentialsEmail: "Email",
