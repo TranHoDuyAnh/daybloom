@@ -3,15 +3,12 @@
 import { ChevronLeft, ChevronRight, Loader2, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { messages } from "@/i18n";
 import type { CalendarView } from "@/lib/calendar/view";
 import { periodLabel } from "@/lib/calendar/view";
 import { cn } from "cn";
 
-const VIEW_LABELS: Record<CalendarView, string> = {
-  month: "Tháng",
-  week: "Tuần",
-  day: "Ngày",
-};
+const VIEW_LABELS: Record<CalendarView, string> = messages.calendar.views;
 
 export function CalendarToolbar({
   view,
@@ -35,7 +32,7 @@ export function CalendarToolbar({
           <Button
             variant="ghost"
             size="icon"
-            aria-label="Trước"
+            aria-label={messages.calendar.previous}
             onClick={() => onNavigate(-1)}
             className="rounded-r-none"
           >
@@ -47,12 +44,12 @@ export function CalendarToolbar({
             className="rounded-none border-x border-border px-3"
             onClick={() => onChangeView(view)}
           >
-            Hôm nay
+            {messages.calendar.today}
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            aria-label="Sau"
+            aria-label={messages.calendar.next}
             onClick={() => onNavigate(1)}
             className="rounded-l-none"
           >
@@ -72,7 +69,7 @@ export function CalendarToolbar({
         <div
           className="flex items-center rounded-xl border border-border bg-card p-0.5"
           role="group"
-          aria-label="Chế độ xem"
+          aria-label={messages.calendar.viewMode}
         >
           {(Object.keys(VIEW_LABELS) as CalendarView[]).map((item) => (
             <button
@@ -94,7 +91,7 @@ export function CalendarToolbar({
 
         <Button size="sm" onClick={onCreate}>
           <Plus className="size-4" />
-          <span className="hidden sm:inline">Sự kiện mới</span>
+          <span className="hidden sm:inline">{messages.calendar.newEvent}</span>
         </Button>
       </div>
     </div>

@@ -1,10 +1,11 @@
 import { z } from "zod";
 
+import { messages } from "@/i18n";
 import { MOOD_IDS } from "@/lib/journal/template";
 
 const dateKeySchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Ngày không hợp lệ");
+  .regex(/^\d{4}-\d{2}-\d{2}$/, messages.errors.invalidDate);
 
 const longText = z
   .string()

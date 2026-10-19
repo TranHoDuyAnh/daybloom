@@ -27,6 +27,7 @@ import { categoryName } from "@/lib/calendar/categories";
 import { resolveEventColor } from "@/lib/calendar/colors";
 import type { CalendarEventDTO } from "@/lib/calendar/dto";
 import { formatDateTime } from "@/lib/date";
+import { messages, t } from "@/i18n";
 
 export function EventDetailDialog({
   event,
@@ -45,7 +46,7 @@ export function EventDetailDialog({
 
   const color = resolveEventColor(event.color);
   const timeLabel = event.allDay
-    ? `Cả ngày · ${formatDateTime(event.startAt, "dd/MM/yyyy")}`
+    ? t(messages.calendar.detail.allDayAt, { date: formatDateTime(event.startAt, "dd/MM/yyyy") })
     : `${formatDateTime(event.startAt, "dd/MM/yyyy HH:mm")} → ${formatDateTime(
         event.endAt,
         "dd/MM/yyyy HH:mm",
@@ -90,7 +91,7 @@ export function EventDetailDialog({
           )}
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
             <Tag className="size-3.5" />
-            Màu: {color.name}
+            {t(messages.calendar.detail.colorLine, { name: color.name })}
           </p>
         </div>
 
@@ -99,23 +100,23 @@ export function EventDetailDialog({
             <AlertDialogTrigger asChild>
               <Button variant="ghost" className="text-destructive">
                 <Trash2 className="size-4" />
-                Xóa
+                {messages.common.delete}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Xóa sự kiện này?</AlertDialogTitle>
+                <AlertDialogTitle>{messages.calendar.detail.deleteTitle}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  &ldquo;{event.title}&rdquo; sẽ bị xóa vĩnh viễn và không thể khôi phục.
+                  {t(messages.calendar.detail.deleteDescription, { title: event.title })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Hủy</AlertDialogCancel>
+                <AlertDialogCancel>{messages.common.cancel}</AlertDialogCancel>
                 <AlertDialogAction
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() => onDelete(event)}
                 >
-                  Xóa sự kiện
+                  {messages.calendar.detail.deleteConfirm}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -123,11 +124,11 @@ export function EventDetailDialog({
 
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Đóng
+              {messages.common.close}
             </Button>
             <Button onClick={() => onEdit(event)}>
               <Pencil className="size-4" />
-              Chỉnh sửa
+              {messages.common.edit}
             </Button>
           </div>
         </DialogFooter>

@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MOOD_OPTIONS } from "@/lib/journal/template";
 import { formatDateKey, formatDateTime } from "@/lib/date";
 import { cn } from "cn";
+import { messages, t } from "@/i18n";
 
 export type JournalSummaryDTO = {
   id: string;
@@ -69,8 +70,10 @@ export function JournalList({
     <section className="flex min-h-0 flex-col rounded-2xl border border-border bg-card">
       <div className="space-y-3 border-b border-border px-4 py-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-heading text-sm font-semibold">Nhật ký của tôi</h2>
-          <span className="text-xs text-muted-foreground">{entries.length} ngày</span>
+          <h2 className="font-heading text-sm font-semibold">{messages.journal.title}</h2>
+          <span className="text-xs text-muted-foreground">
+            {t(messages.journal.dayCount, { count: entries.length })}
+          </span>
         </div>
 
         <div className="relative">
@@ -78,8 +81,8 @@ export function JournalList({
           <Input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Tìm theo tiêu đề hoặc nội dung..."
-            aria-label="Tìm kiếm nhật ký"
+            placeholder={messages.journal.searchPlaceholder}
+            aria-label={messages.journal.searchLabel}
             className="pl-8"
           />
         </div>
@@ -87,7 +90,7 @@ export function JournalList({
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
             <Label htmlFor="journal-from" className="text-[11px] text-muted-foreground">
-              Từ ngày
+              {messages.journal.fromDate}
             </Label>
             <Input
               id="journal-from"
@@ -98,7 +101,7 @@ export function JournalList({
           </div>
           <div className="space-y-1">
             <Label htmlFor="journal-to" className="text-[11px] text-muted-foreground">
-              Đến ngày
+              {messages.journal.toDate}
             </Label>
             <Input
               id="journal-to"
@@ -112,8 +115,12 @@ export function JournalList({
         <div className="flex items-center justify-between gap-2">
           <p className="text-[11px] text-muted-foreground">
             {hasSelectedEntry
-              ? `Ngày ${formatDateKey(selectedDate, "dd/MM/yyyy")} đã có nội dung`
-              : `Ngày ${formatDateKey(selectedDate, "dd/MM/yyyy")} chưa có nội dung`}
+              ? t(messages.journal.selectedHasContent, {
+                  date: formatDateKey(selectedDate, "dd/MM/yyyy"),
+                })
+              : t(messages.journal.selectedEmpty, {
+                  date: formatDateKey(selectedDate, "dd/MM/yyyy"),
+                })}
           </p>
           {filtersActive && (
             <Button
@@ -128,7 +135,7 @@ export function JournalList({
               }}
             >
               <X className="size-3" />
-              Xóa lọc
+              {messages.journal.clearFilters}
             </Button>
           )}
         </div>
@@ -141,8 +148,8 @@ export function JournalList({
               <BookOpen className="mx-auto mb-2 size-5 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
                 {filtersActive
-                  ? "Không tìm thấy nhật ký nào phù hợp."
-                  : "Chưa có nhật ký nào. Bắt đầu viết cho hôm nay nhé!"}
+                  ? messages.journal.listEmptyFiltered
+                  : messages.journal.listEmpty}
               </p>
             </li>
           )}
@@ -170,7 +177,7 @@ export function JournalList({
                         {emoji && <span aria-hidden>{emoji}</span>}
                       </p>
                       <p className="truncate text-sm text-foreground/80">
-                        {entry.title || "Không có tiêu đề"}
+                        {entry.title || messages.journal.untitled}
                       </p>
                       {entry.preview && (
                         <p className="line-clamp-2 text-xs text-muted-foreground">
@@ -182,7 +189,7 @@ export function JournalList({
                     <div className="flex shrink-0 flex-col items-end gap-1">
                       {entry.entryDate === todayKey && (
                         <Badge variant="secondary" className="font-normal text-[10px]">
-                          Hôm nay
+                          {messages.journal.todayBadge}
                         </Badge>
                       )}
                       <span className="text-[10px] text-muted-foreground">

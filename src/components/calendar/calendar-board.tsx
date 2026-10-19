@@ -22,6 +22,7 @@ import type { CalendarView } from "@/lib/calendar/view";
 import { shiftDateKey, viewRange } from "@/lib/calendar/view";
 import { toDateKey } from "@/lib/date";
 import { cn } from "cn";
+import { messages } from "@/i18n";
 
 type EditorState =
   | { open: false }
@@ -90,7 +91,7 @@ export function CalendarBoard({
         toast.error(result.error);
         return;
       }
-      toast.success("Đã xóa sự kiện");
+      toast.success(messages.calendar.toastDeleted);
       refresh();
     },
     [refresh],
@@ -182,7 +183,7 @@ export function CalendarBoard({
           <div className="pointer-events-none absolute inset-0 flex items-start justify-center pt-16">
             <span className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground shadow-sm">
               <Loader2 className="size-3.5 animate-spin" />
-              Đang tải lịch...
+              {messages.calendar.loading}
             </span>
           </div>
         )}
@@ -192,13 +193,15 @@ export function CalendarBoard({
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card/60 px-6 py-10 text-center">
           <CalendarPlus className="size-6 text-muted-foreground" />
           <div>
-            <p className="font-heading text-base font-semibold">Chưa có sự kiện nào</p>
+            <p className="font-heading text-base font-semibold">
+              {messages.calendar.emptyTitle}
+            </p>
             <p className="text-sm text-muted-foreground">
-              Nhấn vào một ô ngày hoặc khung giờ để tạo sự kiện đầu tiên.
+              {messages.calendar.emptyDescription}
             </p>
           </div>
           <Button size="sm" onClick={() => openCreate(dateKey)}>
-            Tạo sự kiện
+            {messages.calendar.createEvent}
           </Button>
         </div>
       )}

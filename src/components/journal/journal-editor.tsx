@@ -36,6 +36,7 @@ import {
 } from "@/lib/journal/form";
 import { formatDateKey, formatDateTime } from "@/lib/date";
 import { cn } from "cn";
+import { messages, t } from "@/i18n";
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
@@ -144,7 +145,7 @@ export function JournalEditor({
       return;
     }
     dirtyRef.current = false;
-    toast.success("Đã xóa nhật ký");
+    toast.success(messages.journal.toastDeleted);
     onDeleted();
   }
 
@@ -160,7 +161,7 @@ export function JournalEditor({
             size="icon"
             className="md:hidden"
             onClick={onBack}
-            aria-label="Quay lại danh sách"
+            aria-label={messages.journal.backToList}
           >
             <ArrowLeft className="size-4" />
           </Button>
@@ -170,8 +171,10 @@ export function JournalEditor({
             </p>
             <p className="text-xs text-muted-foreground">
               {updatedAt
-                ? `Cập nhật lần cuối ${formatDateTime(updatedAt, "HH:mm dd/MM")}`
-                : "Chưa có nội dung — bắt đầu viết bất cứ lúc nào"}
+                ? t(messages.journal.lastUpdated, {
+                    time: formatDateTime(updatedAt, "HH:mm dd/MM"),
+                  })
+                : messages.journal.noContentYet}
             </p>
           </div>
         </div>
@@ -185,7 +188,7 @@ export function JournalEditor({
                 variant="ghost"
                 size="icon"
                 className="text-muted-foreground"
-                aria-label="Xóa nhật ký"
+                aria-label={messages.journal.deleteLabel}
                 disabled={!journal?.id}
               >
                 <Trash2 className="size-4" />
@@ -193,18 +196,20 @@ export function JournalEditor({
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Xóa nhật ký ngày {dateLabel}?</AlertDialogTitle>
+                <AlertDialogTitle>
+                  {t(messages.journal.deleteTitle, { date: dateLabel })}
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  Toàn bộ nội dung của ngày này sẽ bị xóa vĩnh viễn.
+                  {messages.journal.deleteDescription}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Hủy</AlertDialogCancel>
+                <AlertDialogCancel>{messages.common.cancel}</AlertDialogCancel>
                 <AlertDialogAction
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() => void handleDelete()}
                 >
-                  Xóa nhật ký
+                  {messages.journal.deleteConfirm}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -215,8 +220,8 @@ export function JournalEditor({
       <div className="min-h-0 flex-1 space-y-8 px-4 py-5 sm:px-6">
         <Input
           value={values.title}
-          placeholder="Tiêu đề cho ngày này..."
-          aria-label="Tiêu đề nhật ký"
+          placeholder={messages.journal.titlePlaceholder}
+          aria-label={messages.journal.titleLabel}
           className="font-heading h-auto border-none bg-transparent px-0 text-xl font-semibold shadow-none focus-visible:ring-0 sm:text-2xl"
           onChange={(event) => markDirty({ ...values, title: event.target.value })}
         />
@@ -249,7 +254,7 @@ export function JournalEditor({
         ))}
 
         <div className="pb-4 text-[11px] text-muted-foreground">
-          Nội dung được lưu tự động vào Neon PostgreSQL sau khi bạn ngừng nhập.
+          {messages.journal.autosaveNote}
         </div>
       </div>
     </section>
@@ -261,7 +266,7 @@ function SaveIndicator({ status, onRetry }: { status: SaveStatus; onRetry: () =>
     return (
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
         <Loader2 className="size-3.5 animate-spin" />
-        Saving...
+        {messages.journal.statusSaving}
       </span>
     );
   }
@@ -270,10 +275,10 @@ function SaveIndicator({ status, onRetry }: { status: SaveStatus; onRetry: () =>
     return (
       <span className="flex items-center gap-2 text-xs text-destructive">
         <AlertCircle className="size-3.5" />
-        Save failed
+        {messages.journal.statusError}
         <Button variant="ghost" size="sm" className="h-6 px-2 text-xs" onClick={onRetry}>
           <RotateCw className="size-3" />
-          Thử lại
+          {messages.common.retry}
         </Button>
       </span>
     );
@@ -283,7 +288,7 @@ function SaveIndicator({ status, onRetry }: { status: SaveStatus; onRetry: () =>
     return (
       <span className={cn("flex items-center gap-1.5 text-xs text-emerald-600")}>
         <Check className="size-3.5" />
-        Saved
+        {messages.journal.statusSaved}
       </span>
     );
   }
@@ -291,7 +296,7 @@ function SaveIndicator({ status, onRetry }: { status: SaveStatus; onRetry: () =>
   return (
     <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
       <CloudUpload className="size-3.5" />
-      Tự động lưu
+      {messages.journal.statusIdle}
     </span>
   );
 }

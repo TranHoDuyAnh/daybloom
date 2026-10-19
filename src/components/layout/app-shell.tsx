@@ -7,6 +7,7 @@ import { LogOut, Sparkles } from "lucide-react";
 
 import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { Button } from "@/components/ui/button";
+import { messages } from "@/i18n";
 import { cn } from "cn";
 
 function isActive(pathname: string, href: string) {
@@ -40,12 +41,12 @@ export function AppShell({
                 <Sparkles className="size-4" />
               </span>
               <div className="leading-tight">
-                <p className="font-heading text-base font-semibold">DayBloom</p>
-                <p className="text-xs text-muted-foreground">Calendar &amp; Journal</p>
+                <p className="font-heading text-base font-semibold">{messages.app.name}</p>
+                <p className="text-xs text-muted-foreground">{messages.app.tagline}</p>
               </div>
             </div>
 
-            <nav className="flex flex-1 flex-col gap-1" aria-label="Điều hướng chính">
+            <nav className="flex flex-1 flex-col gap-1" aria-label={messages.app.mainNav}>
               {NAV_ITEMS.map((item) => {
                 const active = isActive(pathname, item.href);
                 const Icon = item.icon;
@@ -75,7 +76,7 @@ export function AppShell({
 
             <div className="mt-4 space-y-3 border-t border-border pt-4">
               <div className="px-1">
-                <p className="truncate text-sm font-medium">{userName || "DayBloom"}</p>
+                <p className="truncate text-sm font-medium">{userName || messages.app.name}</p>
                 <p className="truncate text-xs text-muted-foreground">{userEmail}</p>
               </div>
               <Button
@@ -85,7 +86,7 @@ export function AppShell({
                 onClick={() => void signOut({ callbackUrl: "/login" })}
               >
                 <LogOut className="size-4" />
-                Đăng xuất
+                {messages.app.logout}
               </Button>
             </div>
           </div>
@@ -95,7 +96,7 @@ export function AppShell({
           <header className="mb-4 flex items-center justify-between gap-3 md:mb-6">
             <div className="min-w-0">
               <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                Hôm nay
+                {messages.app.today}
               </p>
               <h1 className="font-heading truncate text-lg font-semibold capitalize sm:text-xl">
                 {today}

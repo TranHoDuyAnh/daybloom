@@ -1,6 +1,7 @@
 "use client";
 
 import { EventBlock } from "@/components/calendar/event-block";
+import { messages, t } from "@/i18n";
 import { eventsOnDay, visibleDayKeys } from "@/lib/calendar/layout";
 import type { CalendarEventDTO } from "@/lib/calendar/dto";
 import { viewRange } from "@/lib/calendar/view";
@@ -90,7 +91,7 @@ export function MonthView({
                 ))}
                 {hiddenCount > 0 && (
                   <p className="px-2 text-[11px] text-muted-foreground">
-                    +{hiddenCount} sự kiện khác
+                    {t(messages.calendar.hiddenEvents, { count: hiddenCount })}
                   </p>
                 )}
               </div>

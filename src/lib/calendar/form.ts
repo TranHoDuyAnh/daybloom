@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { messages } from "@/i18n";
 import { DEFAULT_CATEGORY, EVENT_CATEGORY_IDS } from "@/lib/calendar/categories";
 import { DEFAULT_EVENT_COLOR } from "@/lib/calendar/colors";
 import type { CalendarEventDTO } from "@/lib/calendar/dto";
@@ -13,12 +14,12 @@ import {
 } from "@/lib/date";
 import type { EventInput } from "@/lib/validation/calendar";
 
-const dateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ngày không hợp lệ");
-const timeSchema = z.string().regex(/^\d{2}:\d{2}$/, "Giờ không hợp lệ");
+const dateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, messages.errors.invalidDate);
+const timeSchema = z.string().regex(/^\d{2}:\d{2}$/, messages.errors.invalidClock);
 
 export const eventFormSchema = z
   .object({
-    title: z.string().trim().min(1, "Tên sự kiện không được để trống").max(200),
+    title: z.string().trim().min(1, messages.errors.titleRequired).max(200),
     description: z.string().max(4000),
     location: z.string().max(300),
     allDay: z.boolean(),
@@ -37,7 +38,7 @@ export const eventFormSchema = z
         ctx.addIssue({
           code: "custom",
           path: ["endDate"],
-          message: "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu",
+          message: messages.errors.endDateBeforeStart,
         });
       }
       return;
@@ -46,7 +47,7 @@ export const eventFormSchema = z
       ctx.addIssue({
         code: "custom",
         path: ["endTime"],
-        message: "Thời gian kết thúc phải sau thời gian bắt đầu",
+        message: messages.errors.endBeforeStart,
       });
     }
   });

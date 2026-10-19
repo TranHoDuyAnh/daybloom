@@ -28,6 +28,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { saveEventAction } from "@/actions/calendar";
+import { messages } from "@/i18n";
 import { EVENT_CATEGORIES } from "@/lib/calendar/categories";
 import { eventFormSchema, formValuesToPayload, type EventFormValues } from "@/lib/calendar/form";
 
@@ -65,14 +66,14 @@ export function EventDialog({
     if (!result.ok) {
       toast.error(result.error);
       const fieldErrors = result.fieldErrors ?? {};
-      for (const [field, messages] of Object.entries(fieldErrors)) {
-        if (field in values && messages?.length) {
-          form.setError(field as keyof EventFormValues, { message: messages[0] });
+      for (const [field, fieldMessages] of Object.entries(fieldErrors)) {
+        if (field in values && fieldMessages?.length) {
+          form.setError(field as keyof EventFormValues, { message: fieldMessages[0] });
         }
       }
       return;
     }
-    toast.success(eventId ? "Đã cập nhật sự kiện" : "Đã tạo sự kiện");
+    toast.success(eventId ? messages.calendar.toastUpdated : messages.calendar.toastCreated);
     onOpenChange(false);
     onSaved();
   }
@@ -84,19 +85,17 @@ export function EventDialog({
       <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-heading">
-            {eventId ? "Chỉnh sửa sự kiện" : "Sự kiện mới"}
+            {eventId ? messages.calendar.dialog.titleEdit : messages.calendar.dialog.titleCreate}
           </DialogTitle>
-          <DialogDescription>
-            Thời gian được lưu theo múi giờ Asia/Ho_Chi_Minh.
-          </DialogDescription>
+          <DialogDescription>{messages.calendar.dialog.timezoneNote}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="event-title">Tên sự kiện</Label>
+            <Label htmlFor="event-title">{messages.calendar.dialog.titleLabel}</Label>
             <Input
               id="event-title"
-              placeholder="Ví dụ: Họp nhóm dự án"
+              placeholder={messages.calendar.dialog.titlePlaceholder}
               autoFocus
               {...form.register("title")}
             />
@@ -106,9 +105,9 @@ export function EventDialog({
           <div className="flex items-center justify-between rounded-xl border border-border px-3 py-2.5">
             <div>
               <Label htmlFor="event-allday" className="text-sm">
-                Sự kiện cả ngày
+                {messages.calendar.dialog.allDayLabel}
               </Label>
-              <p className="text-xs text-muted-foreground">Không hiển thị theo khung giờ</p>
+              <p className="text-xs text-muted-foreground">{messages.calendar.dialog.allDayHint}</p>
             </div>
             <Switch
               id="event-allday"
@@ -119,11 +118,11 @@ export function EventDialog({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="event-start-date">Bắt đầu · ngày</Label>
+              <Label htmlFor="event-start-date">{messages.calendar.dialog.startDate}</Label>
               <Input id="event-start-date" type="date" {...form.register("startDate")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="event-start-time">Bắt đầu · giờ</Label>
+              <Label htmlFor="event-start-time">{messages.calendar.dialog.startTime}</Label>
               <Input
                 id="event-start-time"
                 type="time"
@@ -132,11 +131,11 @@ export function EventDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="event-end-date">Kết thúc · ngày</Label>
+              <Label htmlFor="event-end-date">{messages.calendar.dialog.endDate}</Label>
               <Input id="event-end-date" type="date" {...form.register("endDate")} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="event-end-time">Kết thúc · giờ</Label>
+              <Label htmlFor="event-end-time">{messages.calendar.dialog.endTime}</Label>
               <Input
                 id="event-end-time"
                 type="time"
@@ -151,7 +150,7 @@ export function EventDialog({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="event-category">Danh mục</Label>
+              <Label htmlFor="event-category">{messages.calendar.dialog.category}</Label>
               <Select
                 value={form.watch("category")}
                 onValueChange={(value) =>
@@ -159,7 +158,7 @@ export function EventDialog({
                 }
               >
                 <SelectTrigger id="event-category" className="w-full">
-                  <SelectValue placeholder="Chọn danh mục" />
+                  <SelectValue placeholder={messages.calendar.dialog.categoryPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   {EVENT_CATEGORIES.map((category) => (
@@ -171,17 +170,17 @@ export function EventDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="event-location">Địa điểm</Label>
+              <Label htmlFor="event-location">{messages.calendar.dialog.location}</Label>
               <Input
                 id="event-location"
-                placeholder="Không bắt buộc"
+                placeholder={messages.common.optional}
                 {...form.register("location")}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Màu sự kiện</Label>
+            <Label>{messages.calendar.dialog.color}</Label>
             <ColorPicker
               value={form.watch("color")}
               onChange={(color) => form.setValue("color", color)}
@@ -189,11 +188,11 @@ export function EventDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="event-description">Mô tả</Label>
+            <Label htmlFor="event-description">{messages.calendar.dialog.description}</Label>
             <Textarea
               id="event-description"
               rows={3}
-              placeholder="Không bắt buộc"
+              placeholder={messages.common.optional}
               {...form.register("description")}
             />
           </div>
@@ -202,18 +201,18 @@ export function EventDialog({
             {onDelete ? (
               <Button type="button" variant="ghost" className="text-destructive" onClick={onDelete}>
                 <Trash2 className="size-4" />
-                Xóa
+                {messages.common.delete}
               </Button>
             ) : (
               <span />
             )}
             <div className="flex gap-2">
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-                Hủy
+                {messages.common.cancel}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className="size-4 animate-spin" />}
-                {eventId ? "Lưu thay đổi" : "Tạo sự kiện"}
+                {eventId ? messages.calendar.dialog.save : messages.calendar.dialog.submit}
               </Button>
             </div>
           </DialogFooter>

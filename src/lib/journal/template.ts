@@ -1,23 +1,26 @@
-export const MOOD_OPTIONS = [
-  { id: "happy", label: "Happy", emoji: "😊" },
-  { id: "calm", label: "Calm", emoji: "😌" },
-  { id: "neutral", label: "Neutral", emoji: "😐" },
-  { id: "sad", label: "Sad", emoji: "😔" },
-  { id: "stressed", label: "Stressed", emoji: "😣" },
-  { id: "tired", label: "Tired", emoji: "😴" },
-] as const;
+import { messages } from "@/i18n";
 
-export type MoodId = (typeof MOOD_OPTIONS)[number]["id"];
+export const MOOD_IDS = ["happy", "calm", "neutral", "sad", "stressed", "tired"] as const;
 
-export const MOOD_IDS = MOOD_OPTIONS.map((m) => m.id) as [MoodId, ...MoodId[]];
+export type MoodId = (typeof MOOD_IDS)[number];
 
-export const SCALE_LABELS: Record<number, string> = {
-  1: "Rất thấp",
-  2: "Thấp",
-  3: "Bình thường",
-  4: "Tốt",
-  5: "Rất tốt",
+export const MOOD_EMOJI: Record<MoodId, string> = {
+  happy: "😊",
+  calm: "😌",
+  neutral: "😐",
+  sad: "😔",
+  stressed: "😣",
+  tired: "😴",
 };
+
+/** ID dùng cho lưu trữ; `label` chỉ là nhãn hiển thị (lấy từ i18n). */
+export const MOOD_OPTIONS = MOOD_IDS.map((id) => ({
+  id,
+  label: messages.journal.moods[id],
+  emoji: MOOD_EMOJI[id],
+}));
+
+export const SCALE_LABELS: Record<number, string> = messages.journal.scale;
 
 export type JournalFieldType = "text" | "textarea" | "markdown" | "mood" | "scale";
 
@@ -42,124 +45,127 @@ export type JournalTemplate = {
   sections: JournalSection[];
 };
 
+const TEMPLATE = messages.journal.template;
+const FIELDS = TEMPLATE.fields;
+
 export const DAILY_JOURNAL_TEMPLATE: JournalTemplate = {
   id: "daily-journal",
-  name: "Daily Journal",
+  name: TEMPLATE.name,
   sections: [
     {
       id: "check-in",
-      title: "A · Daily Check-in",
-      description: "Ghi nhanh cảm giác của bạn trong ngày hôm nay.",
+      title: TEMPLATE.sections["check-in"].title,
+      description: TEMPLATE.sections["check-in"].description,
       fields: [
-        { key: "mood", label: "Today's mood", hint: "Tâm trạng hôm nay", type: "mood" },
+        { key: "mood", type: "mood", label: FIELDS.mood.label, hint: FIELDS.mood.hint },
         {
           key: "energyLevel",
-          label: "Energy level",
-          hint: "Mức năng lượng (1–5)",
           type: "scale",
+          label: FIELDS.energyLevel.label,
+          hint: FIELDS.energyLevel.hint,
         },
         {
           key: "sleepQuality",
-          label: "Sleep quality",
-          hint: "Chất lượng giấc ngủ (1–5)",
           type: "scale",
+          label: FIELDS.sleepQuality.label,
+          hint: FIELDS.sleepQuality.hint,
         },
         {
           key: "intention",
-          label: "Today's intention",
-          hint: "Điều mình muốn tập trung hôm nay",
           type: "text",
-          placeholder: "Hôm nay mình muốn dành năng lượng cho...",
+          label: FIELDS.intention.label,
+          hint: FIELDS.intention.hint,
+          placeholder: FIELDS.intention.placeholder,
         },
       ],
     },
     {
       id: "reflection",
-      title: "B · Daily Reflection",
-      description: "Không cần trả lời hết — chỉ viết những gì bạn muốn.",
+      title: TEMPLATE.sections.reflection.title,
+      description: TEMPLATE.sections.reflection.description,
       fields: [
         {
           key: "wentWell",
-          label: "What went well today?",
-          hint: "Hôm nay điều gì đã diễn ra tốt đẹp?",
           type: "textarea",
-          placeholder: "Một khoảnh khắc khiến mình thấy nhẹ nhõm là...",
+          label: FIELDS.wentWell.label,
+          hint: FIELDS.wentWell.hint,
+          placeholder: FIELDS.wentWell.placeholder,
         },
         {
           key: "accomplishments",
-          label: "What did I accomplish?",
-          hint: "Hôm nay mình đã hoàn thành được những gì?",
           type: "textarea",
-          placeholder: "Mình đã hoàn thành...",
+          label: FIELDS.accomplishments.label,
+          hint: FIELDS.accomplishments.hint,
+          placeholder: FIELDS.accomplishments.placeholder,
         },
         {
           key: "learnings",
-          label: "What did I learn?",
-          hint: "Hôm nay mình học được điều gì mới?",
           type: "textarea",
-          placeholder: "Mình nhận ra rằng...",
+          label: FIELDS.learnings.label,
+          hint: FIELDS.learnings.hint,
+          placeholder: FIELDS.learnings.placeholder,
         },
         {
           key: "challenges",
-          label: "What challenged me?",
-          hint: "Điều gì khiến mình gặp khó khăn?",
           type: "textarea",
-          placeholder: "Điều khó nhất hôm nay là...",
+          label: FIELDS.challenges.label,
+          hint: FIELDS.challenges.hint,
+          placeholder: FIELDS.challenges.placeholder,
         },
         {
           key: "improvements",
-          label: "What could I improve?",
-          hint: "Ngày mai mình có thể cải thiện điều gì?",
           type: "textarea",
-          placeholder: "Ngày mai mình sẽ thử...",
+          label: FIELDS.improvements.label,
+          hint: FIELDS.improvements.hint,
+          placeholder: FIELDS.improvements.placeholder,
         },
         {
           key: "gratitude",
-          label: "What am I grateful for?",
-          hint: "Hôm nay mình biết ơn điều gì?",
           type: "textarea",
-          placeholder: "Mình biết ơn vì...",
+          label: FIELDS.gratitude.label,
+          hint: FIELDS.gratitude.hint,
+          placeholder: FIELDS.gratitude.placeholder,
         },
       ],
     },
     {
       id: "tomorrow",
-      title: "C · Tomorrow",
+      title: TEMPLATE.sections.tomorrow.title,
       fields: [
         {
           key: "tomorrowPriority",
-          label: "My priority for tomorrow",
-          hint: "Ưu tiên lớn nhất cho ngày mai",
           type: "text",
-          placeholder: "Việc quan trọng nhất ngày mai là...",
+          label: FIELDS.tomorrowPriority.label,
+          hint: FIELDS.tomorrowPriority.hint,
+          placeholder: FIELDS.tomorrowPriority.placeholder,
         },
         {
           key: "rememberNote",
-          label: "Something I want to remember",
-          hint: "Một điều mình muốn ghi nhớ",
           type: "text",
-          placeholder: "Mình muốn nhớ rằng...",
+          label: FIELDS.rememberNote.label,
+          hint: FIELDS.rememberNote.hint,
+          placeholder: FIELDS.rememberNote.placeholder,
         },
         {
           key: "notes",
-          label: "Notes",
-          hint: "Ghi chú bổ sung",
           type: "textarea",
-          placeholder: "Ghi chú thêm...",
+          label: FIELDS.notes.label,
+          hint: FIELDS.notes.hint,
+          placeholder: FIELDS.notes.placeholder,
         },
       ],
     },
     {
       id: "free-writing",
-      title: "D · Free Writing",
-      description: "Viết tự do, không theo format. Hỗ trợ Markdown đơn giản.",
+      title: TEMPLATE.sections["free-writing"].title,
+      description: TEMPLATE.sections["free-writing"].description,
       fields: [
         {
           key: "freeWriting",
-          label: "Free journal",
-          hint: "Vùng viết tự do",
           type: "markdown",
-          placeholder: "Hôm nay mình nghĩ về...",
+          label: FIELDS.freeWriting.label,
+          hint: FIELDS.freeWriting.hint,
+          placeholder: FIELDS.freeWriting.placeholder,
         },
       ],
     },

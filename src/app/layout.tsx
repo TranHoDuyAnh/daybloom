@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
+import { messages } from "@/i18n";
 
 import "./globals.css";
 
@@ -16,7 +17,7 @@ const serif = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "DayBloom — Personal Calendar & Journal",
+  title: `${messages.app.name} — ${messages.app.tagline}`,
   description: "Lịch cá nhân và sổ tay nhật ký hằng ngày.",
 };
 

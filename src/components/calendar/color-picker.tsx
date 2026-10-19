@@ -3,6 +3,7 @@
 import { Check } from "lucide-react";
 
 import { EVENT_COLORS, isHexColor, resolveEventColor } from "@/lib/calendar/colors";
+import { messages } from "@/i18n";
 import { cn } from "cn";
 import { Input } from "@/components/ui/input";
 
@@ -46,7 +47,7 @@ export function ColorPicker({
           className="text-xs text-muted-foreground"
           htmlFor="custom-event-color"
         >
-          Màu tùy chỉnh
+          {messages.calendar.colorPicker.custom}
         </label>
         <Input
           id="custom-event-color"

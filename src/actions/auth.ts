@@ -2,6 +2,7 @@
 
 import { AuthError } from "next-auth";
 
+import { messages } from "@/i18n";
 import { signIn, signOut } from "@/lib/auth";
 import { fail, ok, type ActionResult } from "@/lib/action-result";
 import { loginSchema } from "@/lib/validation/auth";
@@ -9,7 +10,7 @@ import { loginSchema } from "@/lib/validation/auth";
 export async function loginAction(input: unknown): Promise<ActionResult<null>> {
   const parsed = loginSchema.safeParse(input);
   if (!parsed.success) {
-    return fail("Vui lòng nhập email và mật khẩu", parsed.error.flatten().fieldErrors);
+    return fail(messages.auth.missingFields, parsed.error.flatten().fieldErrors);
   }
 
   try {
@@ -21,10 +22,10 @@ export async function loginAction(input: unknown): Promise<ActionResult<null>> {
     return ok(null);
   } catch (error) {
     if (error instanceof AuthError) {
-      return fail("Email hoặc mật khẩu không đúng");
+      return fail(messages.auth.invalidCredentials);
     }
     console.error(error);
-    return fail("Không thể đăng nhập. Vui lòng thử lại.");
+    return fail(messages.auth.failed);
   }
 }
 

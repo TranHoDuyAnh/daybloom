@@ -1,3 +1,5 @@
+import { messages } from "@/i18n";
+
 export type FieldErrors = Record<string, string[] | undefined>;
 
 export type ActionResult<T = unknown> =
@@ -15,8 +17,8 @@ export function ok<T>(data: T): ActionResult<T> {
 /** Maps thrown errors to a user-facing message without leaking internals. */
 export function toErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message === "UNAUTHORIZED") {
-    return "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.";
+    return messages.errors.unauthorized;
   }
   console.error(error);
-  return "Không thể lưu dữ liệu. Vui lòng thử lại.";
+  return messages.errors.saveFailed;
 }

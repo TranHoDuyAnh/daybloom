@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
+import { messages } from "@/i18n";
 import { authConfig } from "@/lib/auth/config";
 
 const credentialsSchema = z.object({
@@ -18,8 +19,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: messages.auth.credentialsEmail, type: "email" },
+        password: { label: messages.auth.credentialsPassword, type: "password" },
       },
       async authorize(raw) {
         const parsed = credentialsSchema.safeParse(raw);

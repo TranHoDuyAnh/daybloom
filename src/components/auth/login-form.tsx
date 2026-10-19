@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { messages } from "@/i18n";
 import { loginSchema, type LoginValues } from "@/lib/validation/auth";
 
 export function LoginForm() {
@@ -37,12 +38,12 @@ export function LoginForm() {
       <CardContent className="pt-6">
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{messages.auth.email}</Label>
             <Input
               id="email"
               type="email"
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder={messages.auth.emailPlaceholder}
               aria-invalid={Boolean(errors.email)}
               {...form.register("email")}
             />
@@ -52,7 +53,7 @@ export function LoginForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Mật khẩu</Label>
+            <Label htmlFor="password">{messages.auth.password}</Label>
             <Input
               id="password"
               type="password"
@@ -72,7 +73,7 @@ export function LoginForm() {
             ) : (
               <LogIn className="size-4" />
             )}
-            Đăng nhập
+            {messages.auth.submit}
           </Button>
         </form>
       </CardContent>

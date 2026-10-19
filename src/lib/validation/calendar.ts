@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { EVENT_CATEGORY_IDS } from "@/lib/calendar/categories";
 import { isHexColor } from "@/lib/calendar/colors";
+import { messages } from "@/i18n";
 
 const optionalText = (max = 4000) =>
   z
@@ -14,11 +15,11 @@ const optionalText = (max = 4000) =>
 
 const colorSchema = z
   .string()
-  .refine((value) => isHexColor(value) || /^[a-z]+$/.test(value), "Màu không hợp lệ");
+  .refine((value) => isHexColor(value) || /^[a-z]+$/.test(value), messages.errors.invalidColor);
 
 export const eventInputSchema = z
   .object({
-    title: z.string().trim().min(1, "Tên sự kiện không được để trống").max(200),
+    title: z.string().trim().min(1, messages.errors.titleRequired).max(200),
     description: optionalText(),
     startAt: z.coerce.date(),
     endAt: z.coerce.date(),
@@ -28,7 +29,7 @@ export const eventInputSchema = z
     location: optionalText(300),
   })
   .refine((value) => value.endAt.getTime() > value.startAt.getTime(), {
-    message: "Thời gian kết thúc phải sau thời gian bắt đầu",
+    message: messages.errors.endBeforeStart,
     path: ["endAt"],
   });
 

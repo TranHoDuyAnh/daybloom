@@ -1,3 +1,5 @@
+import { messages } from "@/i18n";
+
 export type EventColor = {
   id: string;
   name: string;
@@ -8,17 +10,18 @@ export type EventColor = {
   soft: string;
 };
 
+/** ID dùng cho lưu trữ; `name` chỉ là nhãn hiển thị (lấy từ i18n). */
 export const EVENT_COLORS: EventColor[] = [
-  { id: "lavender", name: "Lavender", hex: "#C6B4F5", ink: "#4B3A85", soft: "#EDE8FC" },
-  { id: "coral", name: "Coral", hex: "#FF8274", ink: "#8C3529", soft: "#FFE4E0" },
-  { id: "peach", name: "Peach", hex: "#FFB38A", ink: "#8A4A25", soft: "#FFEADF" },
-  { id: "butter", name: "Butter Yellow", hex: "#F5D76E", ink: "#7A5D0E", soft: "#FCF2D3" },
-  { id: "mint", name: "Mint", hex: "#9BD9B5", ink: "#276B45", soft: "#E2F5EA" },
-  { id: "sky", name: "Sky Blue", hex: "#91C9F7", ink: "#1F5C8C", soft: "#E1F1FE" },
-  { id: "rose", name: "Rose Pink", hex: "#F7A8C4", ink: "#8F3358", soft: "#FCE7EF" },
-  { id: "sage", name: "Sage Green", hex: "#A8C6A1", ink: "#3D6437", soft: "#E9F1E7" },
-  { id: "indigo", name: "Indigo", hex: "#6258E8", ink: "#3A31A8", soft: "#E4E1FB" },
-  { id: "neutral", name: "Neutral Gray", hex: "#9CA0AE", ink: "#454A58", soft: "#EDEEF1" },
+  { id: "lavender", name: messages.calendar.colors.lavender, hex: "#C6B4F5", ink: "#4B3A85", soft: "#EDE8FC" },
+  { id: "coral", name: messages.calendar.colors.coral, hex: "#FF8274", ink: "#8C3529", soft: "#FFE4E0" },
+  { id: "peach", name: messages.calendar.colors.peach, hex: "#FFB38A", ink: "#8A4A25", soft: "#FFEADF" },
+  { id: "butter", name: messages.calendar.colors.butter, hex: "#F5D76E", ink: "#7A5D0E", soft: "#FCF2D3" },
+  { id: "mint", name: messages.calendar.colors.mint, hex: "#9BD9B5", ink: "#276B45", soft: "#E2F5EA" },
+  { id: "sky", name: messages.calendar.colors.sky, hex: "#91C9F7", ink: "#1F5C8C", soft: "#E1F1FE" },
+  { id: "rose", name: messages.calendar.colors.rose, hex: "#F7A8C4", ink: "#8F3358", soft: "#FCE7EF" },
+  { id: "sage", name: messages.calendar.colors.sage, hex: "#A8C6A1", ink: "#3D6437", soft: "#E9F1E7" },
+  { id: "indigo", name: messages.calendar.colors.indigo, hex: "#6258E8", ink: "#3A31A8", soft: "#E4E1FB" },
+  { id: "neutral", name: messages.calendar.colors.neutral, hex: "#9CA0AE", ink: "#454A58", soft: "#EDEEF1" },
 ];
 
 export const DEFAULT_EVENT_COLOR = "indigo";

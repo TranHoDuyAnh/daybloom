@@ -10,6 +10,7 @@ import {
   updateEvent,
 } from "@/lib/calendar/repository";
 import { requireUserId } from "@/lib/auth";
+import { messages } from "@/i18n";
 import { fail, ok, toErrorMessage, type ActionResult } from "@/lib/action-result";
 import { eventIdSchema, eventInputSchema } from "@/lib/validation/calendar";
 
@@ -33,24 +34,24 @@ export async function saveEventAction(
     const userId = await requireUserId();
     const parsed = parseInput(input);
     if (!parsed.success) {
-      return fail("Dữ liệu sự kiện không hợp lệ", parsed.fieldErrors);
+      return fail(messages.errors.invalidEventData, parsed.fieldErrors);
     }
 
     if (id) {
       const parsedId = eventIdSchema.safeParse(id);
-      if (!parsedId.success) return fail("Sự kiện không tồn tại");
+      if (!parsedId.success) return fail(messages.errors.eventNotFound);
 
       const existing = await getEvent(userId, id);
-      if (!existing) return fail("Sự kiện không tồn tại hoặc đã bị xóa");
+      if (!existing) return fail(messages.errors.eventGone);
 
       const row = await updateEvent(userId, id, parsed.data);
-      if (!row) return fail("Không thể cập nhật sự kiện");
+      if (!row) return fail(messages.errors.eventUpdateFailed);
       refresh();
       return ok({ id: row.id });
     }
 
     const row = await insertEvent(userId, parsed.data);
-    if (!row) return fail("Không thể tạo sự kiện");
+    if (!row) return fail(messages.errors.eventCreateFailed);
     refresh();
     return ok({ id: row.id });
   } catch (error) {
@@ -62,10 +63,10 @@ export async function deleteEventAction(id: string): Promise<ActionResult<{ id: 
   try {
     const userId = await requireUserId();
     const parsedId = eventIdSchema.safeParse(id);
-    if (!parsedId.success) return fail("Sự kiện không hợp lệ");
+    if (!parsedId.success) return fail(messages.errors.invalidEvent);
 
     const row = await deleteEvent(userId, id);
-    if (!row) return fail("Sự kiện không tồn tại hoặc đã bị xóa");
+    if (!row) return fail(messages.errors.eventGone);
     refresh();
     return ok({ id: row.id });
   } catch (error) {
@@ -84,16 +85,16 @@ export async function moveEventAction(input: {
     const startAt = new Date(input.startAt);
     const endAt = new Date(input.endAt);
 
-    if (!parsedId.success) return fail("Sự kiện không hợp lệ");
+    if (!parsedId.success) return fail(messages.errors.invalidEvent);
     if (Number.isNaN(startAt.getTime()) || Number.isNaN(endAt.getTime())) {
-      return fail("Thời gian không hợp lệ");
+      return fail(messages.errors.invalidTime);
     }
     if (endAt.getTime() <= startAt.getTime()) {
-      return fail("Thời gian kết thúc phải sau thời gian bắt đầu");
+      return fail(messages.errors.endBeforeStart);
     }
 
     const row = await moveEvent(userId, input.id, { startAt, endAt });
-    if (!row) return fail("Sự kiện không tồn tại hoặc đã bị xóa");
+    if (!row) return fail(messages.errors.eventGone);
     refresh();
     return ok({ id: row.id });
   } catch (error) {

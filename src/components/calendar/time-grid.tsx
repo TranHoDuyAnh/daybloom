@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { EventBlock } from "@/components/calendar/event-block";
 import { Button } from "@/components/ui/button";
+import { messages, t } from "@/i18n";
 import type { CalendarEventDTO } from "@/lib/calendar/dto";
 import { eventsOnDay, layoutTimedEvents, splitByAllDay } from "@/lib/calendar/layout";
 import { formatDateKey, toDateKey, zonedParts } from "@/lib/date";
@@ -59,7 +60,7 @@ export function TimeGrid({
                 type="button"
                 onClick={() => onCreateAt(key, undefined, true)}
                 className="flex flex-col items-center gap-0.5 px-2 py-2 transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-                title="Tạo sự kiện cả ngày"
+                title={messages.calendar.createAllDay}
               >
                 <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
                   {formatDateKey(key, "EEE")}
@@ -80,7 +81,7 @@ export function TimeGrid({
 
       <div className="flex border-b border-border bg-muted/20">
         <div className="w-14 shrink-0 py-1 pr-2 text-right text-[10px] uppercase text-muted-foreground">
-          All day
+          {messages.calendar.allDayShort}
         </div>
         <div
           className="grid flex-1 gap-1 py-1"
@@ -142,7 +143,9 @@ export function TimeGrid({
                   }}
                   role="button"
                   tabIndex={-1}
-                  aria-label={`Tạo sự kiện ngày ${formatDateKey(key, "dd/MM/yyyy")}`}
+                  aria-label={t(messages.calendar.createOnDay, {
+                    date: formatDateKey(key, "dd/MM/yyyy"),
+                  })}
                 >
                   {HOURS.map((hour) => (
                     <div
@@ -229,13 +232,13 @@ export function DayAgenda({
                 onClick={() => onCreateAt(key, 9 * 60)}
                 className="text-xs text-muted-foreground"
               >
-                + Thêm
+                {messages.calendar.add}
               </Button>
             </div>
 
             {dayEvents.length === 0 ? (
               <p className="rounded-xl bg-muted/50 px-3 py-4 text-center text-xs text-muted-foreground">
-                Chưa có sự kiện nào cho ngày này.
+                {messages.calendar.noEventsForDay}
               </p>
             ) : (
               <ul className="space-y-1.5">

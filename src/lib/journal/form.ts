@@ -1,6 +1,7 @@
 import type { z } from "zod";
 
 import type { DailyJournal } from "@/db/schema";
+import { messages } from "@/i18n";
 import { DAILY_JOURNAL_TEMPLATE, JOURNAL_FIELD_KEYS } from "@/lib/journal/template";
 import type { journalInputSchema } from "@/lib/validation/journal";
 
@@ -97,6 +98,6 @@ export const JOURNAL_TEMPLATE_FIELDS = DAILY_JOURNAL_TEMPLATE.sections.flatMap(
 );
 
 export function scaleLabel(value: number | null): string {
-  if (value === null) return "Chưa chọn";
+  if (value === null) return messages.common.none;
   return `${value}/5`;
 }
