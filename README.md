@@ -32,6 +32,7 @@ Toàn bộ dữ liệu lưu trong **Neon PostgreSQL**, không dùng LocalStorage
 
 **Bảo mật**
 - Đăng nhập bắt buộc; middleware bảo vệ `/calendar`, `/journal`
+- Có thể tạo tài khoản mới tại `/register` (email + mật khẩu ≥ 8 ký tự, hash bcrypt), hoặc dùng tài khoản tạo bằng `npm run seed`
 - Mọi mutation là Server Action, kiểm tra `userId` từ session trước khi chạm DB
 - Validate server-side bằng Zod; secret chỉ nằm trong biến môi trường
 
@@ -80,7 +81,7 @@ npm run seed
 npm run dev
 ```
 
-Mở [http://localhost:3000](http://localhost:3000), đăng nhập bằng `SEED_USER_EMAIL` / `SEED_USER_PASSWORD`.
+Mở [http://localhost:3000](http://localhost:3000), đăng nhập bằng `SEED_USER_EMAIL` / `SEED_USER_PASSWORD` — hoặc vào `/register` để tự tạo tài khoản mới.
 
 ## Scripts
 

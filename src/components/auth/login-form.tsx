@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -75,6 +76,16 @@ export function LoginForm() {
             )}
             {messages.auth.submit}
           </Button>
+
+          <p className="text-center text-xs text-muted-foreground">
+            {messages.auth.noAccount}{" "}
+            <Link
+              href="/register"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {messages.auth.registerLink}
+            </Link>
+          </p>
         </form>
       </CardContent>
     </Card>
