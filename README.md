@@ -106,7 +106,7 @@ Mở [http://localhost:3000](http://localhost:3000), đăng nhập bằng `SEED_
 4. Khai báo Environment Variables cho cả Production/Preview:
    - `DATABASE_URL` (Neon connection string)
    - `AUTH_SECRET` (`openssl rand -base64 32`)
-   - `AUTH_URL` = domain production (ví dụ `https://daybloom.vercel.app`)
+   - `AUTH_URL` = domain production (ví dụ `https://daybloom.vercel.app`) — **tuyệt đối không để `http://localhost:3000`**, nếu không đăng nhập sẽ không tạo được session
    - `SEED_USER_EMAIL`, `SEED_USER_PASSWORD`, `SEED_USER_NAME`
 5. Deploy.
 6. Chạy migration trên database production:

@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { Loader2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
-import { loginAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,11 +23,17 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: LoginValues) {
-    const result = await loginAction(values);
-    if (!result.ok) {
-      toast.error(result.error);
+    const result = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    });
+
+    if (!result || result.error) {
+      toast.error(messages.auth.invalidCredentials);
       return;
     }
+
     router.replace("/calendar");
     router.refresh();
   }

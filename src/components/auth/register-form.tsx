@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { Loader2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -35,6 +36,18 @@ export function RegisterForm() {
       return;
     }
     toast.success(messages.auth.registerSuccess);
+
+    const session = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    });
+
+    if (!session || session.error) {
+      router.replace("/login");
+      return;
+    }
+
     router.replace("/calendar");
     router.refresh();
   }
