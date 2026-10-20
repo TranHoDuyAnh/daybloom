@@ -160,6 +160,17 @@ export const vi = {
     deleteDescription: "Toàn bộ nội dung của ngày này sẽ bị xóa vĩnh viễn.",
     deleteConfirm: "Xóa nhật ký",
     toastDeleted: "Đã xóa nhật ký",
+    views: {
+      all: "Tất cả Bento",
+      morning: "Buổi sáng ☀️",
+      evening: "Buổi tối 🌙",
+      freeWriting: "Viết tự do ✍️",
+    },
+    completionProgress: "{count}/{total} mục đã ghi",
+    wordCount: "{count} từ",
+    readTime: "~{minutes} phút đọc",
+    expandCanvas: "Mở rộng",
+    collapseCanvas: "Thu gọn",
     scale: {
       1: "Rất thấp",
       2: "Thấp",
