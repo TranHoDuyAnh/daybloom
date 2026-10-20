@@ -24,6 +24,7 @@ import {
   IntentionBentoCard,
   MoodBentoCard,
   SleepBentoCard,
+  TodayCalendarEventsBentoCard,
   ZenCanvasCard,
 } from "@/components/journal/journal-fields";
 import {
@@ -40,6 +41,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { CalendarEventDTO } from "@/lib/calendar/dto";
 import { DAILY_JOURNAL_TEMPLATE } from "@/lib/journal/template";
 import {
   formValuesToPayload,
@@ -59,12 +61,14 @@ const AUTOSAVE_DELAY = 1200;
 export function JournalEditor({
   entryDate,
   journal,
+  dayEvents = [],
   onBack,
   onSaved,
   onDeleted,
 }: {
   entryDate: string;
   journal: JournalRecord | null;
+  dayEvents?: CalendarEventDTO[];
   onBack: () => void;
   onSaved: () => void;
   onDeleted: () => void;
@@ -391,6 +395,14 @@ export function JournalEditor({
               />
             </div>
           </div>
+        )}
+
+        {/* ================= SECTION: Today Calendar Events (Bridge) ================= */}
+        {(activeTab === "all" || activeTab === "morning" || activeTab === "evening") && (
+          <TodayCalendarEventsBentoCard
+            entryDate={entryDate}
+            events={dayEvents}
+          />
         )}
 
         {/* ================= SECTION 2: Daily Reflection Bento ================= */}

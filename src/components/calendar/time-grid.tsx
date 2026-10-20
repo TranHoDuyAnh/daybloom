@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { EventBlock } from "@/components/calendar/event-block";
 import { Button } from "@/components/ui/button";
@@ -8,20 +8,23 @@ import { messages, t } from "@/i18n";
 import type { CalendarEventDTO } from "@/lib/calendar/dto";
 import { eventsOnDay, layoutTimedEvents, splitByAllDay } from "@/lib/calendar/layout";
 import { formatDateKey, toDateKey, zonedParts } from "@/lib/date";
+import { MOOD_OPTIONS } from "@/lib/journal/template";
 import { cn } from "cn";
 
-const HOUR_HEIGHT = 56;
+const HOUR_HEIGHT = 60;
 const HOURS = Array.from({ length: 24 }, (_, index) => index);
 
 export function TimeGrid({
   dayKeys,
   events,
+  journalEntries = [],
   onSelectEvent,
   onCreateAt,
   className,
 }: {
   dayKeys: string[];
   events: CalendarEventDTO[];
+  journalEntries?: { entryDate: string; mood: string | null }[];
   onSelectEvent: (event: CalendarEventDTO) => void;
   onCreateAt: (dateKey: string, startMinutes?: number, allDay?: boolean) => void;
   className?: string;
@@ -29,6 +32,17 @@ export function TimeGrid({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [nowMinutes, setNowMinutes] = useState<number | null>(null);
   const todayKey = toDateKey(new Date());
+
+  const moodMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const j of journalEntries) {
+      if (j.mood) {
+        const emoji = MOOD_OPTIONS.find((m) => m.id === j.mood)?.emoji;
+        if (emoji) map.set(j.entryDate, emoji);
+      }
+    }
+    return map;
+  }, [journalEntries]);
 
   useEffect(() => {
     const update = () => {
@@ -41,34 +55,51 @@ export function TimeGrid({
   }, []);
 
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = 7 * HOUR_HEIGHT;
+    if (scrollRef.current) scrollRef.current.scrollTop = 7.5 * HOUR_HEIGHT;
   }, []);
 
+  const nowTop = nowMinutes !== null ? (nowMinutes / 60) * HOUR_HEIGHT : null;
+  const nowTimeString = nowMinutes !== null
+    ? `${String(Math.floor(nowMinutes / 60)).padStart(2, "0")}:${String(nowMinutes % 60).padStart(2, "0")}`
+    : null;
+
   return (
-    <div className={cn("overflow-hidden rounded-2xl border border-border bg-card", className)}>
-      <div className="flex border-b border-border bg-muted/40">
-        <div className="w-14 shrink-0" />
+    <div className={cn("overflow-hidden rounded-3xl border border-border/80 bg-card shadow-xs", className)}>
+      {/* Day Columns Header */}
+      <div className="flex border-b border-border/80 bg-muted/30">
+        <div className="w-16 shrink-0 border-r border-border/60" />
         <div
           className="grid flex-1"
           style={{ gridTemplateColumns: `repeat(${dayKeys.length}, minmax(0, 1fr))` }}
         >
           {dayKeys.map((key) => {
             const isToday = key === todayKey;
+            const emoji = moodMap.get(key);
+
             return (
               <button
                 key={key}
                 type="button"
                 onClick={() => onCreateAt(key, undefined, true)}
-                className="flex flex-col items-center gap-0.5 px-2 py-2 transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                className="group flex flex-col items-center gap-0.5 border-r border-border/60 px-2 py-2.5 transition-colors last:border-r-0 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                 title={messages.calendar.createAllDay}
               >
-                <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                  {formatDateKey(key, "EEE")}
-                </span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {formatDateKey(key, "EEE")}
+                  </span>
+                  {emoji && (
+                    <span className="text-xs leading-none" title="Tâm trạng">
+                      {emoji}
+                    </span>
+                  )}
+                </div>
                 <span
                   className={cn(
-                    "inline-flex size-7 items-center justify-center rounded-full text-sm font-medium",
-                    isToday && "bg-primary text-primary-foreground",
+                    "inline-flex size-7 items-center justify-center rounded-full text-xs font-semibold transition-colors",
+                    isToday
+                      ? "bg-primary font-bold text-primary-foreground shadow-xs"
+                      : "text-foreground group-hover:bg-muted",
                   )}
                 >
                   {formatDateKey(key, "d")}
@@ -79,18 +110,19 @@ export function TimeGrid({
         </div>
       </div>
 
-      <div className="flex border-b border-border bg-muted/20">
-        <div className="w-14 shrink-0 py-1 pr-2 text-right text-[10px] uppercase text-muted-foreground">
+      {/* All Day Events Row */}
+      <div className="flex border-b border-border/80 bg-muted/15">
+        <div className="w-16 shrink-0 border-r border-border/60 py-2 pr-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           {messages.calendar.allDayShort}
         </div>
         <div
-          className="grid flex-1 gap-1 py-1"
+          className="grid flex-1 gap-1 py-1.5"
           style={{ gridTemplateColumns: `repeat(${dayKeys.length}, minmax(0, 1fr))` }}
         >
           {dayKeys.map((key) => {
             const { allDay } = splitByAllDay(eventsOnDay(events, key));
             return (
-              <div key={key} className="min-h-6 space-y-1 pr-1">
+              <div key={key} className="min-h-6 space-y-1 border-r border-border/40 px-1.5 last:border-r-0">
                 {allDay.map((dayEvent) => (
                   <EventBlock
                     key={dayEvent.event.id}
@@ -104,22 +136,35 @@ export function TimeGrid({
         </div>
       </div>
 
+      {/* Timed Grid Scroll Container */}
       <div ref={scrollRef} className="max-h-[64dvh] overflow-y-auto">
         <div className="flex">
-          <div className="w-14 shrink-0">
+          {/* Hour Labels Column */}
+          <div className="relative w-16 shrink-0 border-r border-border/60 select-none">
             {HOURS.map((hour) => (
               <div
                 key={hour}
                 className="relative text-right text-[11px] text-muted-foreground"
                 style={{ height: HOUR_HEIGHT }}
               >
-                <span className="absolute -top-1.5 right-2 font-mono">
+                <span className="absolute -top-2 right-2.5 font-mono text-[10px] text-muted-foreground/80">
                   {String(hour).padStart(2, "0")}:00
                 </span>
               </div>
             ))}
+
+            {/* Time label badge on current time */}
+            {nowTop !== null && dayKeys.includes(todayKey) && (
+              <div
+                className="pointer-events-none absolute right-1 z-30 -translate-y-1/2 rounded-md bg-rose-500 px-1 py-0.5 text-[10px] font-bold text-white shadow-xs"
+                style={{ top: nowTop }}
+              >
+                {nowTimeString}
+              </div>
+            )}
           </div>
 
+          {/* Day Columns */}
           <div
             className="grid flex-1"
             style={{ gridTemplateColumns: `repeat(${dayKeys.length}, minmax(0, 1fr))` }}
@@ -132,7 +177,10 @@ export function TimeGrid({
               return (
                 <div
                   key={key}
-                  className="relative border-l border-border"
+                  className={cn(
+                    "relative border-r border-border/60 last:border-r-0",
+                    isToday && "bg-primary/[0.015]",
+                  )}
                   style={{ height: HOUR_HEIGHT * 24 }}
                   onClick={(clickEvent) => {
                     const rect = clickEvent.currentTarget.getBoundingClientRect();
@@ -147,32 +195,36 @@ export function TimeGrid({
                     date: formatDateKey(key, "dd/MM/yyyy"),
                   })}
                 >
+                  {/* Hour horizontal grid lines */}
                   {HOURS.map((hour) => (
                     <div
                       key={hour}
-                      className="border-b border-border/60"
+                      className="border-b border-border/50"
                       style={{ height: HOUR_HEIGHT }}
                     />
                   ))}
 
-                  {isToday && nowMinutes !== null && (
+                  {/* CURRENT TIME INDICATOR (Vạch đỏ thời gian thực) */}
+                  {isToday && nowTop !== null && (
                     <div
-                      className="pointer-events-none absolute left-0 right-0 z-20 border-t border-destructive"
-                      style={{ top: (nowMinutes / 60) * HOUR_HEIGHT }}
+                      className="pointer-events-none absolute left-0 right-0 z-20 flex items-center"
+                      style={{ top: nowTop }}
                     >
-                      <span className="absolute -left-0.5 -top-1 size-2 rounded-full bg-destructive" />
+                      <div className="absolute -left-1.5 size-3 rounded-full bg-rose-500 ring-4 ring-rose-500/20 shadow-xs animate-pulse" />
+                      <div className="h-0.5 w-full bg-rose-500 shadow-xs" />
                     </div>
                   )}
 
+                  {/* Timed Event Blocks */}
                   {laidOut.map((dayEvent) => (
                     <div
                       key={dayEvent.event.id}
-                      className="absolute z-10 px-0.5"
+                      className="absolute z-10 px-1"
                       style={{
                         top: (dayEvent.startMinutes / 60) * HOUR_HEIGHT,
                         height: Math.max(
-                          ((dayEvent.endMinutes - dayEvent.startMinutes) / 60) * HOUR_HEIGHT - 2,
-                          22,
+                          ((dayEvent.endMinutes - dayEvent.startMinutes) / 60) * HOUR_HEIGHT - 3,
+                          24,
                         ),
                         left: `${(dayEvent.column / dayEvent.columnCount) * 100}%`,
                         width: `${100 / dayEvent.columnCount}%`,
@@ -203,41 +255,80 @@ export function TimeGrid({
 export function DayAgenda({
   dayKeys,
   events,
+  journalEntries = [],
   onSelectEvent,
   onCreateAt,
   className,
 }: {
   dayKeys: string[];
   events: CalendarEventDTO[];
+  journalEntries?: { entryDate: string; mood: string | null }[];
   onSelectEvent: (event: CalendarEventDTO) => void;
   onCreateAt: (dateKey: string, startMinutes?: number, allDay?: boolean) => void;
   className?: string;
 }) {
+  const todayKey = toDateKey(new Date());
+
+  const moodMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const j of journalEntries) {
+      if (j.mood) {
+        const emoji = MOOD_OPTIONS.find((m) => m.id === j.mood)?.emoji;
+        if (emoji) map.set(j.entryDate, emoji);
+      }
+    }
+    return map;
+  }, [journalEntries]);
+
   return (
     <div className={cn("space-y-3", className)}>
       {dayKeys.map((key) => {
+        const isToday = key === todayKey;
+        const emoji = moodMap.get(key);
         const dayEvents = eventsOnDay(events, key).sort(
           (a, b) => Number(b.event.allDay) - Number(a.event.allDay) || a.startMinutes - b.startMinutes,
         );
 
         return (
-          <section key={key} className="rounded-2xl border border-border bg-card p-3">
-            <div className="mb-2 flex items-center justify-between">
-              <h3 className="font-heading text-sm font-semibold">
-                {formatDateKey(key, "EEEE, dd/MM")}
-              </h3>
+          <section
+            key={key}
+            className={cn(
+              "overflow-hidden rounded-3xl border border-border/80 bg-card p-4 shadow-xs transition-all",
+              isToday && "border-primary/40 ring-1 ring-primary/20",
+            )}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span
+                  className={cn(
+                    "inline-flex size-7 items-center justify-center rounded-full text-xs font-semibold",
+                    isToday ? "bg-primary text-primary-foreground shadow-xs" : "bg-muted text-foreground",
+                  )}
+                >
+                  {formatDateKey(key, "d")}
+                </span>
+                <h3 className="font-heading text-sm font-semibold capitalize text-foreground">
+                  {formatDateKey(key, "EEEE, dd/MM")}
+                </h3>
+                {emoji && (
+                  <span className="text-sm leading-none" title="Tâm trạng">
+                    {emoji}
+                  </span>
+                )}
+              </div>
+
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => onCreateAt(key, 9 * 60)}
-                className="text-xs text-muted-foreground"
+                className="h-7 px-2.5 text-xs text-primary hover:bg-primary/10"
               >
                 {messages.calendar.add}
               </Button>
             </div>
 
             {dayEvents.length === 0 ? (
-              <p className="rounded-xl bg-muted/50 px-3 py-4 text-center text-xs text-muted-foreground">
+              <p className="rounded-2xl bg-muted/40 px-3 py-4 text-center text-xs text-muted-foreground">
                 {messages.calendar.noEventsForDay}
               </p>
             ) : (

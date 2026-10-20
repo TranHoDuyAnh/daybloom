@@ -74,7 +74,17 @@ export function AppShell({
               })}
             </nav>
 
-            <div className="mt-4 space-y-3 border-t border-border pt-4">
+            <div className="my-3 hidden rounded-2xl border border-border/70 bg-gradient-to-br from-primary/[0.04] to-amber-500/[0.03] p-3 text-xs md:block">
+              <div className="flex items-center gap-1.5 font-heading font-semibold text-foreground">
+                <Sparkles className="size-3.5 text-primary" />
+                <span>DayBloom Mind</span>
+              </div>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                “Mỗi ngày là một hạt mầm mới. Hãy chăm sóc từng khoảnh khắc nở rộ.”
+              </p>
+            </div>
+
+            <div className="mt-auto space-y-3 border-t border-border pt-4">
               <div className="px-1">
                 <p className="truncate text-sm font-medium">{userName || messages.app.name}</p>
                 <p className="truncate text-xs text-muted-foreground">{userEmail}</p>

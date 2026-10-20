@@ -9,6 +9,7 @@ import {
   type JournalQuery,
   type JournalSummaryDTO,
 } from "@/components/journal/journal-list";
+import type { CalendarEventDTO } from "@/lib/calendar/dto";
 import type { JournalRecord } from "@/lib/journal/form";
 import { toDateKey } from "@/lib/date";
 import { cn } from "cn";
@@ -17,12 +18,14 @@ export function JournalWorkspace({
   dateKey,
   journal,
   entries,
+  dayEvents = [],
   query,
   initialPane,
 }: {
   dateKey: string;
   journal: JournalRecord | null;
   entries: JournalSummaryDTO[];
+  dayEvents?: CalendarEventDTO[];
   query: JournalQuery;
   initialPane: "list" | "editor";
 }) {
@@ -68,7 +71,7 @@ export function JournalWorkspace({
   );
 
   return (
-    <div className="grid gap-4 md:grid-cols-[20rem_minmax(0,1fr)]">
+    <div className="grid gap-6 md:grid-cols-[21rem_minmax(0,1fr)]">
       <div className={cn("md:block", pane === "editor" && "hidden")}>
         <JournalList
           entries={entries}
@@ -87,6 +90,7 @@ export function JournalWorkspace({
             key={dateKey}
             entryDate={dateKey}
             journal={journal}
+            dayEvents={dayEvents}
             onBack={() => setPane("list")}
             onSaved={() => startTransition(() => router.refresh())}
             onDeleted={() => {

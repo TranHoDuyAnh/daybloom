@@ -1,12 +1,17 @@
 "use client";
 
 import { useId, useState } from "react";
+import Link from "next/link";
 import {
+  Calendar,
+  Clock,
   Compass,
+  ExternalLink,
   Feather,
   Flag,
   Heart,
   Lightbulb,
+  MapPin,
   Maximize2,
   Minimize2,
   Moon,
@@ -25,6 +30,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { messages } from "@/i18n";
+import { categoryName } from "@/lib/calendar/categories";
+import { resolveEventColor } from "@/lib/calendar/colors";
+import type { CalendarEventDTO } from "@/lib/calendar/dto";
+import { formatDateTime } from "@/lib/date";
 import {
   MOOD_OPTIONS,
   SCALE_LABELS,
@@ -594,6 +603,112 @@ export function ZenCanvasCard({
           placeholder={messages.journal.template.fields.freeWriting.placeholder}
           className="border-none bg-transparent p-1 font-serif text-base leading-relaxed tracking-normal shadow-none placeholder:font-sans placeholder:text-muted-foreground/50 focus-visible:ring-0 sm:text-lg"
         />
+      </div>
+    </div>
+  );
+}
+
+export function TodayCalendarEventsBentoCard({
+  entryDate,
+  events = [],
+  className,
+}: {
+  entryDate: string;
+  events?: CalendarEventDTO[];
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-br from-card via-card to-primary/[0.03] p-4 transition-all duration-200 hover:border-border hover:shadow-xs sm:p-5",
+        className,
+      )}
+    >
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
+          <div className="flex items-center gap-2">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Calendar className="size-4" />
+            </span>
+            <div>
+              <h4 className="font-heading text-sm font-semibold tracking-tight text-foreground">
+                Lịch trình ngày này
+              </h4>
+              <p className="text-[11px] text-muted-foreground">
+                Các sự kiện và hoạt động đã lên lịch
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="px-2 py-0.5 text-xs font-semibold">
+              {events.length} sự kiện
+            </Badge>
+            <Link
+              href={`/calendar?date=${entryDate}&view=day`}
+              className="flex items-center gap-1 text-xs text-primary hover:underline"
+              title="Xem trên Lịch"
+            >
+              <span>Xem Lịch</span>
+              <ExternalLink className="size-3" />
+            </Link>
+          </div>
+        </div>
+
+        {events.length === 0 ? (
+          <div className="flex items-center justify-between rounded-xl bg-muted/40 p-3 text-xs text-muted-foreground">
+            <span>Chưa có sự kiện nào trong lịch cho ngày này.</span>
+            <Link
+              href={`/calendar?date=${entryDate}&view=day`}
+              className="font-medium text-primary hover:underline"
+            >
+              + Lên lịch ngay
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {events.map((event) => {
+              const color = resolveEventColor(event.color);
+              const timeString = event.allDay
+                ? "Cả ngày"
+                : `${formatDateTime(event.startAt, "HH:mm")} - ${formatDateTime(event.endAt, "HH:mm")}`;
+
+              return (
+                <div
+                  key={event.id}
+                  className="flex items-start gap-2.5 rounded-xl border border-border/60 bg-card p-2.5 shadow-2xs transition-all hover:border-border"
+                >
+                  <div
+                    className="mt-0.5 size-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: color.hex }}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-semibold text-foreground">
+                      {event.title}
+                    </p>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Clock className="size-3 text-muted-foreground/70" />
+                        {timeString}
+                      </span>
+                      {event.category && (
+                        <span className="rounded-md bg-muted px-1.5 py-0.2 text-[10px] font-medium text-muted-foreground">
+                          {categoryName(event.category)}
+                        </span>
+                      )}
+                      {event.location && (
+                        <span className="flex items-center gap-0.5 truncate text-[10px]">
+                          <MapPin className="size-2.5 text-muted-foreground/70" />
+                          {event.location}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

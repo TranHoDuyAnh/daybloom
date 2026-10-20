@@ -4,6 +4,7 @@ import { eventRangeBounds, listEventsInRange } from "@/lib/calendar/repository";
 import { toEventDTO } from "@/lib/calendar/dto";
 import { parseView, viewRange } from "@/lib/calendar/view";
 import { resolveDateKey } from "@/lib/date";
+import { listJournalSummaries } from "@/lib/journal/repository";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,22 @@ export default async function CalendarPage({
 
   const { from, to } = viewRange(view, dateKey);
   const bounds = eventRangeBounds(from, to);
-  const rows = await listEventsInRange(userId, bounds.from, bounds.to);
 
-  return <CalendarBoard view={view} dateKey={dateKey} events={rows.map(toEventDTO)} />;
+  const [rows, journals] = await Promise.all([
+    listEventsInRange(userId, bounds.from, bounds.to),
+    listJournalSummaries(userId, { from, to }),
+  ]);
+
+  return (
+    <CalendarBoard
+      view={view}
+      dateKey={dateKey}
+      events={rows.map(toEventDTO)}
+      journalEntries={journals.map((j) => ({
+        entryDate: j.entryDate,
+        mood: j.mood,
+        title: j.title,
+      }))}
+    />
+  );
 }

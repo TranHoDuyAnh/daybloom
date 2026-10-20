@@ -1,5 +1,8 @@
 import { JournalWorkspace } from "@/components/journal/journal-workspace";
 import { requireUserId } from "@/lib/auth";
+import { eventRangeBounds, listEventsInRange } from "@/lib/calendar/repository";
+import { toEventDTO } from "@/lib/calendar/dto";
+import { viewRange } from "@/lib/calendar/view";
 import { resolveDateKey } from "@/lib/date";
 import { toJournalRecord } from "@/lib/journal/form";
 import { getJournalByDate, listJournalSummaries } from "@/lib/journal/repository";
@@ -20,13 +23,17 @@ export default async function JournalPage({
   };
 
   const userId = await requireUserId();
-  const [journal, summaries] = await Promise.all([
+  const { from: dayFrom, to: dayTo } = viewRange("day", dateKey);
+  const bounds = eventRangeBounds(dayFrom, dayTo);
+
+  const [journal, summaries, events] = await Promise.all([
     getJournalByDate(userId, dateKey),
     listJournalSummaries(userId, {
       from: query.from || undefined,
       to: query.to || undefined,
       search: query.search || undefined,
     }),
+    listEventsInRange(userId, bounds.from, bounds.to),
   ]);
 
   return (
@@ -37,6 +44,7 @@ export default async function JournalPage({
         ...entry,
         updatedAt: entry.updatedAt.toISOString(),
       }))}
+      dayEvents={events.map(toEventDTO)}
       query={query}
       initialPane={params.date ? "editor" : "list"}
     />
