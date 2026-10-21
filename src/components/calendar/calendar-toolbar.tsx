@@ -26,48 +26,62 @@ export function CalendarToolbar({
   onCreate: () => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="flex items-center gap-2">
-        <div className="flex items-center rounded-xl border border-border bg-card">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={messages.calendar.previous}
-            onClick={() => onNavigate(-1)}
-            className="rounded-r-none"
-          >
-            <ChevronLeft className="size-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="rounded-none border-x border-border px-3"
-            onClick={() => onChangeView(view)}
-          >
-            {messages.calendar.today}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={messages.calendar.next}
-            onClick={() => onNavigate(1)}
-            className="rounded-l-none"
-          >
-            <ChevronRight className="size-4" />
-          </Button>
+    <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+      {/* Row 1: Navigation, Date Title, and Action button */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          {/* Prev / Today / Next */}
+          <div className="flex items-center rounded-xl border border-border/80 bg-card shadow-2xs">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={messages.calendar.previous}
+              onClick={() => onNavigate(-1)}
+              className="size-8 rounded-r-none text-muted-foreground hover:text-foreground active:scale-95"
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 rounded-none border-x border-border/80 px-2.5 text-xs font-semibold"
+              onClick={() => onChangeView(view)}
+            >
+              {messages.calendar.today}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={messages.calendar.next}
+              onClick={() => onNavigate(1)}
+              className="size-8 rounded-l-none text-muted-foreground hover:text-foreground active:scale-95"
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+
+          {/* Period Title */}
+          <div className="flex items-center gap-1.5">
+            <h2 className="font-heading text-sm font-semibold capitalize text-foreground sm:text-base">
+              {periodLabel(view, dateKey)}
+            </h2>
+            {isPending && <Loader2 className="size-3.5 animate-spin text-muted-foreground" />}
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <h2 className="font-heading text-base font-semibold sm:text-lg">
-            {periodLabel(view, dateKey)}
-          </h2>
-          {isPending && <Loader2 className="size-3.5 animate-spin text-muted-foreground" />}
+        {/* Mobile New Event Button */}
+        <div className="sm:hidden">
+          <Button size="sm" onClick={onCreate} className="h-8 gap-1 rounded-xl px-2.5 text-xs active:scale-95">
+            <Plus className="size-3.5" />
+            <span>Thêm</span>
+          </Button>
         </div>
       </div>
 
+      {/* Row 2: View Switcher (Full-width segmented control on mobile, compact on desktop) */}
       <div className="flex items-center gap-2">
         <div
-          className="flex items-center rounded-xl border border-border bg-card p-0.5"
+          className="flex w-full items-center rounded-xl border border-border/80 bg-muted/40 p-1 sm:w-auto"
           role="group"
           aria-label={messages.calendar.viewMode}
         >
@@ -78,10 +92,10 @@ export function CalendarToolbar({
               aria-pressed={view === item}
               onClick={() => onChangeView(item)}
               className={cn(
-                "rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors sm:text-sm",
+                "flex-1 rounded-lg py-1.5 text-xs font-medium transition-all sm:flex-initial sm:px-3 active:scale-98",
                 view === item
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                  ? "bg-card text-foreground font-semibold shadow-2xs"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
               {VIEW_LABELS[item]}
@@ -89,9 +103,10 @@ export function CalendarToolbar({
           ))}
         </div>
 
-        <Button size="sm" onClick={onCreate}>
+        {/* Desktop New Event Button */}
+        <Button size="sm" onClick={onCreate} className="hidden h-9 gap-1.5 rounded-xl px-3 sm:flex">
           <Plus className="size-4" />
-          <span className="hidden sm:inline">{messages.calendar.newEvent}</span>
+          <span>{messages.calendar.newEvent}</span>
         </Button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
@@ -16,9 +16,23 @@ const serif = Fraunces({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#faf8f3",
+};
+
 export const metadata: Metadata = {
   title: `${messages.app.name} — ${messages.app.tagline}`,
   description: "Lịch cá nhân và sổ tay nhật ký hằng ngày.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: messages.app.name,
+  },
 };
 
 export default function RootLayout({

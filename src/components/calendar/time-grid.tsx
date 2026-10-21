@@ -65,79 +65,81 @@ export function TimeGrid({
 
   return (
     <div className={cn("overflow-hidden rounded-3xl border border-border/80 bg-card shadow-xs", className)}>
-      {/* Day Columns Header */}
-      <div className="flex border-b border-border/80 bg-muted/30">
-        <div className="w-16 shrink-0 border-r border-border/60" />
-        <div
-          className="grid flex-1"
-          style={{ gridTemplateColumns: `repeat(${dayKeys.length}, minmax(0, 1fr))` }}
-        >
-          {dayKeys.map((key) => {
-            const isToday = key === todayKey;
-            const emoji = moodMap.get(key);
+      <div className="overflow-x-auto">
+        <div className={cn("flex flex-col", dayKeys.length > 1 ? "min-w-[620px] sm:min-w-full" : "w-full")}>
+          {/* Day Columns Header */}
+          <div className="flex border-b border-border/80 bg-muted/30">
+            <div className="w-16 shrink-0 border-r border-border/60" />
+            <div
+              className="grid flex-1"
+              style={{ gridTemplateColumns: `repeat(${dayKeys.length}, minmax(0, 1fr))` }}
+            >
+              {dayKeys.map((key) => {
+                const isToday = key === todayKey;
+                const emoji = moodMap.get(key);
 
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => onCreateAt(key, undefined, true)}
-                className="group flex flex-col items-center gap-0.5 border-r border-border/60 px-2 py-2.5 transition-colors last:border-r-0 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-                title={messages.calendar.createAllDay}
-              >
-                <div className="flex items-center gap-1">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {formatDateKey(key, "EEE")}
-                  </span>
-                  {emoji && (
-                    <span className="text-xs leading-none" title="Tâm trạng">
-                      {emoji}
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => onCreateAt(key, undefined, true)}
+                    className="group flex flex-col items-center gap-0.5 border-r border-border/60 px-2 py-2.5 transition-colors last:border-r-0 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                    title={messages.calendar.createAllDay}
+                  >
+                    <div className="flex items-center gap-1">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {formatDateKey(key, "EEE")}
+                      </span>
+                      {emoji && (
+                        <span className="text-xs leading-none" title="Tâm trạng">
+                          {emoji}
+                        </span>
+                      )}
+                    </div>
+                    <span
+                      className={cn(
+                        "inline-flex size-7 items-center justify-center rounded-full text-xs font-semibold transition-colors",
+                        isToday
+                          ? "bg-primary font-bold text-primary-foreground shadow-xs"
+                          : "text-foreground group-hover:bg-muted",
+                      )}
+                    >
+                      {formatDateKey(key, "d")}
                     </span>
-                  )}
-                </div>
-                <span
-                  className={cn(
-                    "inline-flex size-7 items-center justify-center rounded-full text-xs font-semibold transition-colors",
-                    isToday
-                      ? "bg-primary font-bold text-primary-foreground shadow-xs"
-                      : "text-foreground group-hover:bg-muted",
-                  )}
-                >
-                  {formatDateKey(key, "d")}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-      {/* All Day Events Row */}
-      <div className="flex border-b border-border/80 bg-muted/15">
-        <div className="w-16 shrink-0 border-r border-border/60 py-2 pr-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          {messages.calendar.allDayShort}
-        </div>
-        <div
-          className="grid flex-1 gap-1 py-1.5"
-          style={{ gridTemplateColumns: `repeat(${dayKeys.length}, minmax(0, 1fr))` }}
-        >
-          {dayKeys.map((key) => {
-            const { allDay } = splitByAllDay(eventsOnDay(events, key));
-            return (
-              <div key={key} className="min-h-6 space-y-1 border-r border-border/40 px-1.5 last:border-r-0">
-                {allDay.map((dayEvent) => (
-                  <EventBlock
-                    key={dayEvent.event.id}
-                    event={dayEvent.event}
-                    onSelect={onSelectEvent}
-                  />
-                ))}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+          {/* All Day Events Row */}
+          <div className="flex border-b border-border/80 bg-muted/15">
+            <div className="w-16 shrink-0 border-r border-border/60 py-2 pr-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              {messages.calendar.allDayShort}
+            </div>
+            <div
+              className="grid flex-1 gap-1 py-1.5"
+              style={{ gridTemplateColumns: `repeat(${dayKeys.length}, minmax(0, 1fr))` }}
+            >
+              {dayKeys.map((key) => {
+                const { allDay } = splitByAllDay(eventsOnDay(events, key));
+                return (
+                  <div key={key} className="min-h-6 space-y-1 border-r border-border/40 px-1.5 last:border-r-0">
+                    {allDay.map((dayEvent) => (
+                      <EventBlock
+                        key={dayEvent.event.id}
+                        event={dayEvent.event}
+                        onSelect={onSelectEvent}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-      {/* Timed Grid Scroll Container */}
-      <div ref={scrollRef} className="max-h-[64dvh] overflow-y-auto">
+          {/* Timed Grid Scroll Container */}
+          <div ref={scrollRef} className="max-h-[64dvh] overflow-y-auto">
         <div className="flex">
           {/* Hour Labels Column */}
           <div className="relative w-16 shrink-0 border-r border-border/60 select-none">
@@ -249,6 +251,8 @@ export function TimeGrid({
         </div>
       </div>
     </div>
+  </div>
+</div>
   );
 }
 

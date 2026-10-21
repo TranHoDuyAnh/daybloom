@@ -194,13 +194,13 @@ export function JournalEditor({
   return (
     <section className="flex min-h-0 flex-col rounded-3xl border border-border/80 bg-card shadow-xs">
       {/* Sticky Header with Date, Title, Progress, and Tabs */}
-      <header className="sticky top-0 z-20 flex flex-col gap-3 rounded-t-3xl border-b border-border/80 bg-card/95 px-4 py-4 backdrop-blur-md sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+      <header className="sticky top-0 z-20 flex flex-col gap-2.5 rounded-t-3xl border-b border-border/80 bg-card/95 px-3.5 py-3 backdrop-blur-md sm:gap-3 sm:px-6 sm:py-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 md:hidden"
+              className="size-8 shrink-0 md:hidden active:scale-95"
               onClick={onBack}
               aria-label={messages.journal.backToList}
             >
@@ -208,20 +208,20 @@ export function JournalEditor({
             </Button>
 
             <div>
-              <div className="flex items-center gap-2">
-                <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <CalendarDays className="size-4" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="flex size-6 items-center justify-center rounded-lg bg-primary/10 text-primary sm:size-7">
+                  <CalendarDays className="size-3.5 sm:size-4" />
                 </span>
-                <p className="font-heading text-sm font-semibold capitalize text-foreground sm:text-base">
+                <p className="font-heading text-xs font-semibold capitalize text-foreground sm:text-base">
                   {weekdayLabel}, {dateLabel}
                 </p>
                 {isToday && (
-                  <Badge className="border-none bg-emerald-500/15 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                  <Badge className="border-none bg-emerald-500/15 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 sm:text-[11px]">
                     Hôm nay
                   </Badge>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground sm:text-xs">
                 {updatedAt
                   ? t(messages.journal.lastUpdated, {
                       time: formatDateTime(updatedAt, "HH:mm dd/MM"),
@@ -231,7 +231,7 @@ export function JournalEditor({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <SaveIndicator status={status} onRetry={() => void save()} />
 
             <AlertDialog>
@@ -239,14 +239,14 @@ export function JournalEditor({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-8 text-muted-foreground hover:text-destructive"
+                  className="size-7 text-muted-foreground hover:text-destructive sm:size-8"
                   aria-label={messages.journal.deleteLabel}
                   disabled={!journal?.id}
                 >
-                  <Trash2 className="size-4" />
+                  <Trash2 className="size-3.5 sm:size-4" />
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
+              <AlertDialogContent className="rounded-3xl max-w-sm sm:max-w-lg">
                 <AlertDialogHeader>
                   <AlertDialogTitle>
                     {t(messages.journal.deleteTitle, { date: dateLabel })}
@@ -275,49 +275,48 @@ export function JournalEditor({
             value={values.title}
             placeholder={messages.journal.titlePlaceholder}
             aria-label={messages.journal.titleLabel}
-            className="h-auto border-none bg-transparent px-0 font-heading text-xl font-semibold tracking-tight shadow-none placeholder:text-muted-foreground/40 focus-visible:ring-0 sm:text-2xl"
+            className="h-auto border-none bg-transparent px-0 font-heading text-lg font-semibold tracking-tight shadow-none placeholder:text-muted-foreground/40 focus-visible:ring-0 sm:text-2xl"
             onChange={(event) => markDirty({ ...values, title: event.target.value })}
           />
         </div>
 
         {/* Progress Bar & Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-3">
+        <div className="flex flex-col gap-2 border-t border-border/60 pt-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:pt-3">
           {/* Progress Indicator */}
-          <div className="flex items-center gap-2.5 text-xs text-muted-foreground">
-            <div className="h-2 w-28 overflow-hidden rounded-full bg-muted sm:w-36">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted sm:h-2 sm:w-36">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-primary to-amber-500 transition-all duration-300"
                 style={{ width: `${percentage}%` }}
               />
             </div>
-            <span className="font-medium text-foreground">
-              {completedCount}/{totalCount} mục
+            <span className="font-medium text-foreground text-[11px] sm:text-xs">
+              {completedCount}/{totalCount} mục ({percentage}%)
             </span>
-            <span className="text-[11px] text-muted-foreground">({percentage}%)</span>
           </div>
 
-          {/* View Mode Tabs */}
-          <div className="flex items-center gap-1 rounded-xl border border-border/80 bg-muted/40 p-1 text-xs">
+          {/* View Mode Tabs (Scrollable on small mobile) */}
+          <div className="flex w-full items-center gap-1 overflow-x-auto rounded-xl border border-border/80 bg-muted/40 p-1 text-xs no-scrollbar sm:w-auto">
             <button
               type="button"
               onClick={() => setActiveTab("all")}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-colors",
+                "flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-colors whitespace-nowrap active:scale-98",
                 activeTab === "all"
-                  ? "bg-card text-foreground shadow-xs"
+                  ? "bg-card text-foreground shadow-2xs font-semibold"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
               <Sparkles className="size-3.5" />
-              Tất cả Bento
+              Tất cả
             </button>
             <button
               type="button"
               onClick={() => setActiveTab("morning")}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-colors",
+                "flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-colors whitespace-nowrap active:scale-98",
                 activeTab === "morning"
-                  ? "bg-card text-foreground shadow-xs"
+                  ? "bg-card text-foreground shadow-2xs font-semibold"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -328,9 +327,9 @@ export function JournalEditor({
               type="button"
               onClick={() => setActiveTab("evening")}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-colors",
+                "flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-colors whitespace-nowrap active:scale-98",
                 activeTab === "evening"
-                  ? "bg-card text-foreground shadow-xs"
+                  ? "bg-card text-foreground shadow-2xs font-semibold"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -341,9 +340,9 @@ export function JournalEditor({
               type="button"
               onClick={() => setActiveTab("freeWriting")}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-colors",
+                "flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 font-medium transition-colors whitespace-nowrap active:scale-98",
                 activeTab === "freeWriting"
-                  ? "bg-card text-foreground shadow-xs"
+                  ? "bg-card text-foreground shadow-2xs font-semibold"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >

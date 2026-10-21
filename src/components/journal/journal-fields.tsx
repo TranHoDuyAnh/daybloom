@@ -366,7 +366,7 @@ export function IntentionBentoCard({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={messages.journal.template.fields.intention.placeholder}
-            className="border-primary/20 bg-primary/[0.02] py-2 text-sm font-medium transition-all focus:border-primary focus:bg-card focus:ring-2 focus:ring-primary/20"
+            className="border-primary/20 bg-primary/[0.02] py-2 text-base font-medium transition-all focus:border-primary focus:bg-card focus:ring-2 focus:ring-primary/20 sm:text-sm"
           />
         </div>
       </div>
@@ -522,7 +522,7 @@ export function BentoReflectionCard({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={field.placeholder}
-            className="border-border/70 bg-card/60 text-sm transition-all focus:border-primary focus:bg-card"
+            className="border-border/70 bg-card/60 text-base transition-all focus:border-primary focus:bg-card sm:text-sm"
           />
         ) : (
           <Textarea
@@ -531,7 +531,7 @@ export function BentoReflectionCard({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={field.placeholder}
-            className="min-h-20 resize-y border-border/70 bg-card/60 text-sm leading-relaxed transition-all focus:border-primary focus:bg-card"
+            className="min-h-20 resize-y border-border/70 bg-card/60 text-base leading-relaxed transition-all focus:border-primary focus:bg-card sm:text-sm"
           />
         )}
       </div>
