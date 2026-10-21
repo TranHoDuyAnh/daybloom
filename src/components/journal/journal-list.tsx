@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, Calendar, Search, Sparkles, X, Zap } from "lucide-react";
+import { BookOpen, Calendar, PenLine, Search, X, Zap } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -84,6 +84,16 @@ export function JournalList({
           </Badge>
         </div>
 
+        {/* Nút viết nhật ký hôm nay nổi bật */}
+        <Button
+          type="button"
+          onClick={() => onSelectDate(todayKey)}
+          className="h-10 w-full gap-2 rounded-2xl bg-primary font-medium text-primary-foreground shadow-xs transition-all active:scale-98"
+        >
+          <PenLine className="size-4" />
+          <span>{selectedDate === todayKey ? "Đang viết hôm nay" : "Viết nhật ký hôm nay"}</span>
+        </Button>
+
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -154,13 +164,29 @@ export function JournalList({
       {/* Entries List */}
       <ScrollArea className="max-h-[calc(100dvh-17rem)] flex-1 p-2">
         {entries.length === 0 && (
-          <div className="px-4 py-12 text-center">
-            <div className="mx-auto mb-3 flex size-10 items-center justify-center rounded-2xl bg-muted/80 text-muted-foreground">
-              <Sparkles className="size-5" />
+          <div className="px-4 py-10 text-center">
+            <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <PenLine className="size-6" />
             </div>
-            <p className="text-xs text-muted-foreground">
-              {filtersActive ? messages.journal.listEmptyFiltered : messages.journal.listEmpty}
+            <p className="text-sm font-medium text-foreground mb-1">
+              {filtersActive ? messages.journal.listEmptyFiltered : "Chưa có nhật ký nào"}
             </p>
+            <p className="text-xs text-muted-foreground mb-4">
+              {filtersActive
+                ? "Thử xoá bộ lọc để xem các nhật ký khác."
+                : "Hãy ghi lại những suy nghĩ, cảm xúc và dự định của bạn hôm nay."}
+            </p>
+            {!filtersActive && (
+              <Button
+                type="button"
+                size="sm"
+                className="gap-2 rounded-xl"
+                onClick={() => onSelectDate(todayKey)}
+              >
+                <PenLine className="size-3.5" />
+                <span>Bắt đầu viết ngay</span>
+              </Button>
+            )}
           </div>
         )}
 

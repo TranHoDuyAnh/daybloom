@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { BookOpen, PenLine } from "lucide-react";
 
 import { JournalEditor } from "@/components/journal/journal-editor";
 import {
@@ -71,33 +72,65 @@ export function JournalWorkspace({
   );
 
   return (
-    <div className="grid gap-6 md:grid-cols-[21rem_minmax(0,1fr)]">
-      <div className={cn("md:block", pane === "editor" && "hidden")}>
-        <JournalList
-          entries={entries}
-          selectedDate={dateKey}
-          todayKey={todayKey}
-          query={query}
-          hasSelectedEntry={Boolean(journal)}
-          onSelectDate={handleSelectDate}
-          onQueryChange={handleQueryChange}
-        />
+    <div className="space-y-3">
+      {/* Mobile Top Segmented Switcher (Visible on iPhone/mobile screens) */}
+      <div className="grid grid-cols-2 gap-1 rounded-2xl border border-border/80 bg-muted/50 p-1 md:hidden">
+        <button
+          type="button"
+          onClick={() => setPane("editor")}
+          className={cn(
+            "flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all active:scale-98",
+            pane === "editor"
+              ? "bg-card text-foreground shadow-xs"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <PenLine className="size-3.5" />
+          <span>Viết nhật ký</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setPane("list")}
+          className={cn(
+            "flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-semibold transition-all active:scale-98",
+            pane === "list"
+              ? "bg-card text-foreground shadow-xs"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          <BookOpen className="size-3.5" />
+          <span>Lịch sử ({entries.length})</span>
+        </button>
       </div>
 
-      <div className={cn("min-w-0 md:block", pane === "list" && "hidden")}>
-        <div className={cn("transition-opacity", isPending && "opacity-70")}>
-          <JournalEditor
-            key={dateKey}
-            entryDate={dateKey}
-            journal={journal}
-            dayEvents={dayEvents}
-            onBack={() => setPane("list")}
-            onSaved={() => startTransition(() => router.refresh())}
-            onDeleted={() => {
-              setPane("list");
-              startTransition(() => router.refresh());
-            }}
+      <div className="grid gap-6 md:grid-cols-[21rem_minmax(0,1fr)]">
+        <div className={cn("md:block", pane === "editor" && "hidden")}>
+          <JournalList
+            entries={entries}
+            selectedDate={dateKey}
+            todayKey={todayKey}
+            query={query}
+            hasSelectedEntry={Boolean(journal)}
+            onSelectDate={handleSelectDate}
+            onQueryChange={handleQueryChange}
           />
+        </div>
+
+        <div className={cn("min-w-0 md:block", pane === "list" && "hidden")}>
+          <div className={cn("transition-opacity", isPending && "opacity-70")}>
+            <JournalEditor
+              key={dateKey}
+              entryDate={dateKey}
+              journal={journal}
+              dayEvents={dayEvents}
+              onBack={() => setPane("list")}
+              onSaved={() => startTransition(() => router.refresh())}
+              onDeleted={() => {
+                setPane("list");
+                startTransition(() => router.refresh());
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

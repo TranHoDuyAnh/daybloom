@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function JournalPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string; q?: string; from?: string; to?: string }>;
+  searchParams: Promise<{ date?: string; q?: string; from?: string; to?: string; pane?: string }>;
 }) {
   const params = await searchParams;
   const dateKey = resolveDateKey(params.date);
@@ -46,7 +46,7 @@ export default async function JournalPage({
       }))}
       dayEvents={events.map(toEventDTO)}
       query={query}
-      initialPane={params.date ? "editor" : "list"}
+      initialPane={params.pane === "list" ? "list" : "editor"}
     />
   );
 }
